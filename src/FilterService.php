@@ -2,19 +2,23 @@
 
 namespace DanilPetrenko\EloquentQueryFilter;
 
+use App\Services\Temp\FiltersProvider;
+use Closure;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class BaseFilter
+class FilterService
 {
-    private array $inputData = [];
     private string $modelClass;
     private Model $model;
     private string $table;
-    private array $columns = [];
-    private array $filters = [];
-    private array $activeFilters = [];
+    private FiltersProvider $filters;
+
+    protected FiltersProvider $activeFilters;
+    protected array $columns = [];
+    protected array $inputData = [];
 
     /**
      * Expects Eloquent model class
@@ -22,6 +26,9 @@ class BaseFilter
      */
     public function __construct(string $modelClass)
     {
+        $this->filters = new FiltersProvider();
+        $this->activeFilters = new FiltersProvider();
+
         $this->modelClass = $modelClass;
         $this->model = new $modelClass();
         $this->table = $this->model->getTable();
@@ -70,13 +77,13 @@ class BaseFilter
      * @return $this
      * @throws Exception
      */
-    public function addFilter(string $name, Closure $closure): static
+    public function addFilter(string $name, Closure $closure, bool $addToActive = false): static
     {
-        if (!isset($this->filters[$name])){
-            $this->filters[$name] = $closure;
-        } else {
+        if ($this->filters->getFilters()->where('name', $name)->first() != null)
             throw new Exception('Filter with the name '.$name.' already exists');
-        }
+        $this->filters->makeNewFilter($name, $closure);
+        if ($addToActive)
+            $this->activeFilters->addFilter($this->filters->getFilters()->where('name', $name)->first());
         return $this;
     }
 
@@ -88,7 +95,9 @@ class BaseFilter
      */
     public function loadFiltersFromClass(string $className): static
     {
-        $this->filters = array_merge($this->filters, $className::getFiltersArray());
+        /** @var FiltersProvider $filtersProvider */
+        $filtersProvider = new $className();
+        $this->filters->merge($filtersProvider->getFilters());
         return $this;
     }
 
@@ -100,13 +109,13 @@ class BaseFilter
      */
     public function setFilters(array $filterNames): static
     {
+
         foreach ($filterNames as $filterName)
         {
-            if (isset($this->filters[$filterName])) {
-                $this->activeFilters[] = &$this->filters[$filterName];
-            } else {
+            $filterToMerge = $this->filters->getFilters()->where('name', $filterName)->first();
+            if (!$filterToMerge)
                 throw new Exception('Filter '.$filterName.' does not exist');
-            }
+            $this->activeFilters->mergeOnce($filterToMerge);
         }
         return $this;
     }
@@ -117,7 +126,7 @@ class BaseFilter
      */
     public function getFiltersList(): array
     {
-        return array_keys($this->filters);
+        return $this->filters->getFilters()->pluck('name')->toArray();
     }
 
     /**
@@ -149,7 +158,7 @@ class BaseFilter
      * Redefine this method and provide data filters via addFilter() method.
      * @return void
      */
-    public function initFilters(): void
+    protected function initFilters(): void
     {
         //Redefine me!
     }

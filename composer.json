@@ -5,6 +5,7 @@
     "license": "proprietary",
     "require": {
         "php": ">=8.0",
+        "illuminate/collections": "v10.*",
         "illuminate/support": "v10.*",
         "illuminate/database": "v10.*"
     },
