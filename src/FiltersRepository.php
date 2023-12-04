@@ -2,9 +2,11 @@
 
 namespace DanilPetrenko\EloquentQueryFilter;
 
+use DanilPetrenko\EloquentQueryFilter\FilterService;
+use DanilPetrenko\EloquentQueryFilter\Interfaces\FiltersRepositoryInterface;
 use Illuminate\Support\Collection;
 
-class FiltersProvider
+class FiltersRepository implements FiltersRepositoryInterface
 {
     /**
      * @var Collection
@@ -52,7 +54,7 @@ class FiltersProvider
         return $this;
     }
 
-    protected function setFilters(): void
+    public function setFilters(): void
     {
 
     }

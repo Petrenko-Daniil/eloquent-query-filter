@@ -2,8 +2,8 @@
 
 namespace DanilPetrenko\EloquentQueryFilter;
 
-use App\Services\Temp\FiltersProvider;
 use Closure;
+use DanilPetrenko\EloquentQueryFilter\FiltersRepository;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -11,12 +11,12 @@ use Illuminate\Support\Facades\DB;
 
 class FilterService
 {
-    private string $modelClass;
+    private string|Builder $modelClass;
     private Model $model;
     private string $table;
-    private FiltersProvider $filters;
+    private FiltersRepository $filters;
 
-    protected FiltersProvider $activeFilters;
+    protected FiltersRepository $activeFilters;
     protected array $columns = [];
     protected array $inputData = [];
 
@@ -26,8 +26,8 @@ class FilterService
      */
     public function __construct(string $modelClass)
     {
-        $this->filters = new FiltersProvider();
-        $this->activeFilters = new FiltersProvider();
+        $this->filters = new FiltersRepository();
+        $this->activeFilters = new FiltersRepository();
 
         $this->modelClass = $modelClass;
         $this->model = new $modelClass();
@@ -95,7 +95,7 @@ class FilterService
      */
     public function loadFiltersFromClass(string $className): static
     {
-        /** @var FiltersProvider $filtersProvider */
+        /** @var FiltersRepository $filtersProvider */
         $filtersProvider = new $className();
         $this->filters->merge($filtersProvider->getFilters());
         return $this;
@@ -137,7 +137,7 @@ class FilterService
      */
     public function getBuilder(): Builder|null
     {
-        if (count($this->activeFilters) === 0)
+        if (count($this->activeFilters->getFilters()) === 0)
             return null;
         $builder = null;
         foreach ($this->activeFilters as $filter){

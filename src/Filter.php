@@ -3,9 +3,11 @@
 namespace DanilPetrenko\EloquentQueryFilter;
 
 use Closure;
+use DanilPetrenko\EloquentQueryFilter\FiltersRepository;
+use DanilPetrenko\EloquentQueryFilter\Interfaces\FilterInterface;
 use Illuminate\Database\Eloquent\Builder;
 
-class Filter
+class Filter implements FilterInterface
 {
     private string $name;
     private Closure $closure;

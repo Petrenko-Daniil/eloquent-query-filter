@@ -1,30 +1,36 @@
 # **EloquentQueryFilter**
 Package is developed for quick and easy managing filtering in your application.
 ### Usage:
-Create a new class based on **BaseFilter** class
+Create a new class and extend **FiltersRepository** class or implement **FiltersRepositoryInterface**<br>
+Then you can redefine *setFilters()* method.
 
-    class Filter extends BaseFilter
+    class UserFiltersRepository extends FiltersRepository
     {
-		
+	    public function setFilters(): void
+        {
+            $this->makeNewFilter('activated', function($query){
+                return $query->where('activated', true);
+            });
+        }
 	}
-You can redefine **initFilters()** method to create filters
 
-    public function initFilters():void
-    {
-	    $this->addFilter('active', funtion($query){
-		    return $query->where('active', true);
-		});
-	}
-And then you're able to use this filter anywhere.
+After setting up your repository for filters you can use it anywhere with FilterService.
 
     private function getUsers()
     {
-		$filter = new Filter(User::class);
-	    $users = $filter->setFilters(['active'])
-		    ->getBuilder()
-		    ->get();
-		return $users;
+        $usersFilterService = new FilterService(User::class);
+        $users = $usersFilterService
+            ->loadFiltersFromClass(UserFiltersRepository::class)
+            ->setFilters(['activated'])
+            ->getBuilder()
+            ->get();
+        return $users;
 	}
 
-Every method is well explained in **BaseFilter** class, so it's easy to understand how you can interact with it.
+It may look more complicated than writing query straight in needed place,
+but in fact you will get no repetitive code and will be free to use your filters
+anywhere you need it and change it easily
+
+Every method is well explained in **FilterService** class, so it's easy to understand how you can interact with it.
 I hope this package will help you in development. Feel free to open issues if needed. Contributors are also welcomed!
+![diagram.png](diagram.png)
