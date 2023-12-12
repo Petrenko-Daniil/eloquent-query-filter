@@ -1,36 +1,28 @@
 # **EloquentQueryFilter**
+
 Package is developed for quick and easy managing filtering in your application.
+
 ### Usage:
-Create a new class and extend **FiltersRepository** class or implement **FiltersRepositoryInterface**<br>
-Then you can redefine *setFilters()* method.
 
-    class UserFiltersRepository extends FiltersRepository
+Go to your model and add `use HasFilter;` trait, so you can inject filtration logic anywhere.
+
+Via laravel scopes this trait adds simple methods to inject your filters as a
+
+1. One filter `User::useFilter(ActiveFilter::class)->first();`
+2. Array of filters `User::useFilters([ActiveFilter::class, IsAdminFilter::class])->first();`
+3. FiltersRepository `User::useFiltersRepository(UserFiltersRepository::class)->first();`
+
+Each of your filters have to extend Filter class and implement run() method. <br>
+run() method should always return Builder instance and can use $model to check model's columns for example.
+
+    public function run(Builder $query, Model $model): Builder
     {
-	    public function setFilters(): void
-        {
-            $this->makeNewFilter('activated', function($query){
-                return $query->where('activated', true);
-            });
-        }
-	}
+        return $query->where('active', true);
+    }
 
-After setting up your repository for filters you can use it anywhere with FilterService.
+You can also use $this->parameters field to conditionally filter you model.<br>
 
-    private function getUsers()
-    {
-        $usersFilterService = new FilterService(User::class);
-        $users = $usersFilterService
-            ->loadFiltersFromClass(UserFiltersRepository::class)
-            ->setFilters(['activated'])
-            ->getBuilder()
-            ->get();
-        return $users;
-	}
+### FiltersRepository
 
-It may look more complicated than writing query straight in needed place,
-but in fact you will get no repetitive code and will be free to use your filters
-anywhere you need it and change it easily
-
-Every method is well explained in **FilterService** class, so it's easy to understand how you can interact with it.
-I hope this package will help you in development. Feel free to open issues if needed. Contributors are also welcomed!
-![diagram.png](diagram.png)
+You can create repository of filters which extends FiltersRepository class and implements getFilters() method.<br>
+As a return you should provide a list of filter classes.

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 abstract class Filter implements FilterInterface
 {
-    private array|null $parameters;
+    protected array|null $parameters;
 
     public function __construct(array $parameters = null)
     {

@@ -56,6 +56,6 @@ trait HasFilter
         }
 
         /** @var Filter $filter */
-        return $filter->run($query);
+        return $filter->run($query, $this);
     }
 }
