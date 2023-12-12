@@ -52,7 +52,7 @@ trait HasFilter
             $filterClass = isset(config('eloquent-filters.filters')[$filter])
                 ? config('eloquent-filters.filters')[$filter]
                 : throw new Exception('No filter with such name found, try use class-string instead');
-            $filter = $filterClass($parameters);
+            $filter = new $filterClass($parameters);
         }
 
         /** @var Filter $filter */
