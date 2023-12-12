@@ -11,12 +11,12 @@ trait HasFilter
 {
     /**
      * @param Builder $query
-     * @param FiltersRepository $repository
+     * @param string $repository
      * @param array|null $parameters
      * @return Builder
      * @throws Exception
      */
-    public function scopeUseFiltersRepository(Builder $query, FiltersRepository $repository, array $parameters = null): Builder
+    public function scopeUseFiltersRepository(Builder $query, string $repository, array $parameters = null): Builder
     {
         $filters = $repository::getFilters();
         return $this->scopeUseFilters($query, $filters, $parameters);
