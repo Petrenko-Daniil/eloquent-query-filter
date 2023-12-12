@@ -3,11 +3,11 @@
 namespace DanilPetrenko\EloquentQueryFilter\Interfaces;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 interface FilterInterface
 {
 
-    public function getName(): string;
 
-    public function run(...$vars): Builder;
+    public function run(Builder $query, Model $model): Builder;
 }

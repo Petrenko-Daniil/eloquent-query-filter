@@ -1,22 +1,22 @@
 {
-    "name": "danilpetrenko/eloquent-query-filter",
-    "description": "Package for simple query filtration",
-    "type": "stable",
-    "license": "proprietary",
-    "require": {
-        "php": ">=8.0",
-        "illuminate/collections": "v10.*",
-        "illuminate/support": "v10.*",
-        "illuminate/database": "v10.*"
-    },
-    "autoload": {
-        "psr-4": {
-            "DanilPetrenko\\EloquentQueryFilter\\": "src/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": "DanilPetrenko\\EloquentQueryFilter\\Providers\\EloquentQueryFilterServiceProvider"
-        }
+  "name": "danilpetrenko/eloquent-query-filter",
+  "description": "Package for simple query filtration",
+  "type": "stable",
+  "license": "proprietary",
+  "require": {
+    "php": ">=8.0",
+    "illuminate/collections": "v10.*",
+    "illuminate/support": "v10.*",
+    "illuminate/database": "v10.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "DanilPetrenko\\EloquentQueryFilter\\": "src/"
     }
+  },
+  "extra": {
+    "laravel": {
+      "providers": "DanilPetrenko\\EloquentQueryFilter\\Providers\\EloquentQueryFilterServiceProvider"
+    }
+  }
 }

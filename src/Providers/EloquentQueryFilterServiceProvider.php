@@ -6,6 +6,8 @@ class EloquentQueryFilterServiceProvider extends \Illuminate\Support\ServiceProv
 {
     public function boot()
     {
-
+        $this->publishes([
+            __DIR__ . '../../config/eloquent-filters.php' => config_path('eloquent-filters.php'),
+        ]);
     }
 }

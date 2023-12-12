@@ -3,28 +3,18 @@
 namespace DanilPetrenko\EloquentQueryFilter;
 
 use Closure;
-use DanilPetrenko\EloquentQueryFilter\FiltersRepository;
 use DanilPetrenko\EloquentQueryFilter\Interfaces\FilterInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
-class Filter implements FilterInterface
+abstract class Filter implements FilterInterface
 {
-    private string $name;
-    private Closure $closure;
+    private array|null $parameters;
 
-    public function __construct(string $name, Closure $closure)
+    public function __construct(array $parameters = null)
     {
-        $this->name = $name;
-        $this->closure = $closure;
+        $this->parameters = $parameters;
     }
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function run(...$vars): Builder
-    {
-        return $this->closure->call(...$vars);
-    }
+    abstract public function run(Builder $query, Model $model = null): Builder;
 }
